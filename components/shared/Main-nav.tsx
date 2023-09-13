@@ -103,7 +103,7 @@ const Mainnav = ({ category, userInfo }: Props) => {
               </div>
             </SignOutButton>
             <User
-              onClick={() => router.push(`/profile/${userInfo?.id}`)}
+              onClick={() => router.push(`/profile`)}
               className=" hover: cursor-pointer"
             />
             <Heart className=" hover: cursor-pointer" />
