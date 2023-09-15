@@ -1,12 +1,9 @@
 export async function getCategory() {
   try {
-    const res = await fetch(
-      `${process.env.WEBSITE_URL}/api/admin/category/get-category`,
-      {
-        method: 'GET',
-        cache: 'no-store',
-      }
-    );
+    const res = await fetch('/api/admin/category/get-category', {
+      method: 'GET',
+      cache: 'no-store',
+    });
     const data = await res.json();
     return data;
   } catch (error: any) {
