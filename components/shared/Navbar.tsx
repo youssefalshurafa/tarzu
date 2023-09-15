@@ -3,15 +3,12 @@ import Mainnav from '@/components/shared/Main-nav';
 import { currentUser } from '@clerk/nextjs/server';
 import { UserInfo } from '@/lib/Types';
 import { getUser } from '@/lib/actions/user.action';
+import { getCategory } from '@/lib/actions/category.action';
 
 const Navbar = async () => {
-  const category = [
-    { id: 1, name: 'Kids' },
-    { id: 2, name: 'Tracksuits' },
-    { id: 3, name: 'Tunics' },
-    { id: 4, name: 'Basics' },
-    { id: 5, name: 'Dresses' },
-  ];
+  const response = await getCategory();
+  const category = response.data;
+  console.log('category: ', category);
 
   const user = await currentUser();
   if (!user) {
