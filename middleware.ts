@@ -14,6 +14,7 @@ export default authMiddleware({
     '/api/admin/banner/get-banner',
     '/api/admin/category/get-category',
     '/api/admin/category/delete-category',
+    '/api/admin/category/update-category',
   ],
 });
 

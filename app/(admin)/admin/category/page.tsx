@@ -4,11 +4,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import React, { FormEvent, useEffect, useState } from 'react';
-import { deleteFiles, uploadFiles } from '@/lib/actions/files.action';
+import {
+  deleteFiles,
+  listFiles,
+  uploadFiles,
+} from '@/lib/actions/files.action';
 import {
   createCategory,
   deleteCategory,
   getCategory,
+  updateCategory,
 } from '@/lib/actions/category.action';
 import { toast, Toaster } from 'react-hot-toast';
 import Image from 'next/image';
@@ -17,7 +22,6 @@ const Page = () => {
   const [category, setCategory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [editActive, setEditActive] = useState<any>(false);
-  const [newName, setNewName] = useState<string>('');
 
   const getAllCategories = async () => {
     const response = await getCategory();
@@ -68,6 +72,43 @@ const Page = () => {
       toast.error('Server error');
       setIsLoading(false);
     }
+  };
+
+  const handleEdit = async (e: FormEvent<HTMLFormElement>, cat: any) => {
+    e.preventDefault();
+    try {
+      toast.loading('Updating...');
+      const fd = new FormData(e.target as HTMLFormElement);
+      const newName = fd.getAll('newName').toString();
+      const currentCategories = category.map((item: any) => item.name);
+      if (currentCategories.includes(newName)) {
+        toast.error('Category name already exists');
+        return null;
+      }
+      const uploadedFiles = await uploadFiles(fd);
+      const url = uploadedFiles.map((img) => img.data?.url).toString();
+      const key = uploadedFiles.map((img) => img.data?.key).toString();
+      const formData = {
+        id: cat._id,
+        name: newName,
+        image: {
+          key,
+          url,
+        },
+      };
+      console.log('formData: ', formData);
+
+      const res = await updateCategory(formData);
+      if (res.success) {
+        await deleteFiles(cat.image.key);
+        toast.dismiss();
+        toast.success('Category updated!');
+        getAllCategories();
+      } else {
+        toast.dismiss();
+        toast.error('error');
+      }
+    } catch (error) {}
   };
 
   const handleDelete = async (cat: any) => {
@@ -167,22 +208,35 @@ const Page = () => {
               >
                 {editActive === cat.name && (
                   <section
-                    className={` flex flex-col shadow-md w-full gap-4 bg-slate-100 p-2 rounded-md  `}
+                    className={` flex flex-col  shadow-md w-full gap-4 bg-slate-100 p-2 rounded-md  `}
                   >
-                    <div className="pt-3 flex flex-col gap-2 ">
-                      <p className="font-semibold">Enter new name</p>
-                      <Input
-                        placeholder={cat.name}
-                        type="text"
-                        onChange={(e) => setNewName(e.target.value)}
-                      />
-                    </div>
-                    <div className=" flex justify-center space-x-4 pb-3">
-                      <Button className=" bg-blue-500 hover:bg-blue-900">
-                        Confirm
-                      </Button>
-                      <Button onClick={() => setEditActive('')}>Cancel</Button>
-                    </div>
+                    <form onSubmit={(e) => handleEdit(e, cat)}>
+                      <div className="pt-3 flex flex-col gap-2 ">
+                        <p className="font-semibold">Enter new name</p>
+                        <Input
+                          placeholder={cat.name}
+                          name="newName"
+                          type="text"
+                        />
+                        <p className="font-semibold">Upload new image</p>
+                        <Input
+                          placeholder={cat.name}
+                          name="files"
+                          type="file"
+                        />
+                      </div>
+                      <div className=" mt-3 flex justify-center space-x-4 pb-3">
+                        <Button
+                          type="submit"
+                          className=" bg-blue-500 hover:bg-blue-900"
+                        >
+                          Confirm
+                        </Button>
+                        <Button onClick={() => setEditActive('')}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </form>
                   </section>
                 )}
               </div>

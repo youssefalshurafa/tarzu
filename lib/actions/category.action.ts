@@ -1,9 +1,14 @@
+'use server';
+
 export async function getCategory() {
   try {
-    const res = await fetch('/api/admin/category/get-category', {
-      method: 'GET',
-      cache: 'no-store',
-    });
+    const res = await fetch(
+      ` ${process.env.WEBSITE_URL}/api/admin/category/get-category`,
+      {
+        method: 'GET',
+        cache: 'no-store',
+      }
+    );
     const data = await res.json();
     return data;
   } catch (error: any) {
@@ -40,5 +45,24 @@ export async function deleteCategory(categoryId: any) {
     return data;
   } catch (error: any) {
     throw new Error(`Failed to delete category: ${error.message}`);
+  }
+}
+
+export async function updateCategory(formData: any) {
+  try {
+    const res = await fetch(
+      ` ${process.env.WEBSITE_URL}/api/admin/category/update-category`,
+      {
+        method: 'PUT',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      }
+    );
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    throw new Error(`Failed to update category: ${error.message}`);
   }
 }
