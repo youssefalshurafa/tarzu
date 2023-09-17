@@ -1,4 +1,7 @@
-import { authMiddleware } from '@clerk/nextjs';
+import { authMiddleware, redirectToSignIn } from '@clerk/nextjs';
+import { getUser } from './lib/actions/user.action';
+import { redirect } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
 // This example protects all routes including api/trpc routes
 // Please edit this to allow other routes to be public as needed.
@@ -15,7 +18,25 @@ export default authMiddleware({
     '/api/admin/category/get-category',
     '/api/admin/category/delete-category',
     '/api/admin/category/update-category',
+    '/api/admin/banner/update-banner',
   ],
+  async afterAuth(req, user, context) {
+    let userId = req.userId;
+    const currentUrl = user.url;
+    if (!userId) {
+      if (currentUrl.includes('/admin')) {
+        return NextResponse.redirect('http://localhost:3000/');
+      }
+    } else {
+      const response = await getUser(userId);
+
+      const userRoles = response.data.roles;
+
+      if (currentUrl.includes('/admin') && !userRoles.Admin) {
+        return NextResponse.redirect('http://localhost:3000/');
+      }
+    }
+  },
 });
 
 export const config = {

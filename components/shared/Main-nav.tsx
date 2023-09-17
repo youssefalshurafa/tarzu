@@ -30,6 +30,7 @@ interface Props {
 
 const Mainnav = ({ category, userInfo }: Props) => {
   const router = useRouter();
+  console.log('userInfo:', userInfo);
 
   return (
     <nav className="flex justify-between px-6 py-3 bg-slate-50 drop-shadow-md">

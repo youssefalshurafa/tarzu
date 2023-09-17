@@ -25,7 +25,7 @@ function Sidebar() {
           className={`${
             pathname === '/admin/create-banner' && 'bg-purple-600 text-white'
           } hover:bg-purple-300 hover:text-white relative flex justify-start gap-4 rounded-lg p-4`}
-          href="/admin/create-banner"
+          href="/admin/banner"
         >
           <ImageIcon />
           <p className="md:flex hidden">Banner</p>

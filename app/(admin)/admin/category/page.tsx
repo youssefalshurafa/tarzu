@@ -96,7 +96,6 @@ const Page = () => {
           url,
         },
       };
-      console.log('formData: ', formData);
 
       const res = await updateCategory(formData);
       if (res.success) {
@@ -114,7 +113,6 @@ const Page = () => {
   const handleDelete = async (cat: any) => {
     try {
       toast.loading('Deleting...');
-      console.log('cat: ', cat.image.key);
       await deleteCategory(cat._id);
       await deleteFiles(cat.image.key);
       toast.dismiss();

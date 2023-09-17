@@ -7,12 +7,11 @@ export type UserInfo = {
   orders: string;
   address: string;
   phoneNumber: string;
-  data: {
-    roles: {
-      User: number;
-      Editor: number;
-      Admin: number;
-    };
+
+  roles: {
+    User: number;
+    Editor: number;
+    Admin: number;
   };
 };
 
