@@ -7,6 +7,11 @@ export async function uploadFiles(fd: FormData) {
   const uploadedFiles = await utapi.uploadFiles(files);
   return uploadedFiles;
 }
+export async function uploadThumbnail(fd: FormData) {
+  const files = fd.getAll('thumbnail') as File[];
+  const uploadedThumbnail = await utapi.uploadFiles(files);
+  return uploadedThumbnail;
+}
 
 export async function deleteFiles(oldImgKeys: any) {
   try {
