@@ -6,6 +6,7 @@ export async function POST(req: Request) {
   try {
     await connectToDB();
     const data = await req.json();
+
     const { name, image } = data;
 
     const nameExists = await Category.findOne({ name });

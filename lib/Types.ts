@@ -7,7 +7,6 @@ export type UserInfo = {
   orders: string;
   address: string;
   phoneNumber: string;
-
   roles: {
     User: number;
     Editor: number;
@@ -22,11 +21,12 @@ export type Roles = {
 };
 
 export type ProductType = {
+  _id: string;
   title: string;
   code: string;
   description?: string;
   price: string;
-  category: string;
+  category: Category;
   stock?: string;
   thumbnail: Thumbnail | undefined;
   images: Res[];
@@ -39,4 +39,11 @@ export type Thumbnail = {
 export type Res = {
   key: string;
   url: string;
+};
+
+export type Category = {
+  image: Res;
+  name: string;
+  products: string[];
+  _id: string;
 };

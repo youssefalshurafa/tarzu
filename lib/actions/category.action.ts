@@ -18,13 +18,16 @@ export async function getCategory() {
 
 export async function createCategory(formData: any) {
   try {
-    const res = await fetch('/api/admin/category/create-category', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
+    const res = await fetch(
+      ` ${process.env.WEBSITE_URL}/api/admin/category/create-category`,
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      }
+    );
     const data = await res.json();
     return data;
   } catch (error: any) {
@@ -64,5 +67,21 @@ export async function updateCategory(formData: any) {
     return data;
   } catch (error: any) {
     throw new Error(`Failed to update category: ${error.message}`);
+  }
+}
+
+export async function getCategoryById(categoryId: any) {
+  try {
+    const res = await fetch(
+      `http://localhost:3000/api/admin/category/get-category-ById?id=${categoryId}`,
+      {
+        method: 'GET',
+        body: JSON.stringify(categoryId),
+      }
+    );
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    throw new Error(`Failed to get category: ${error.message}`);
   }
 }

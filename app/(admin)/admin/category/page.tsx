@@ -39,6 +39,7 @@ const Page = () => {
       toast.loading('Creating...');
       const fd = new FormData(e.target as HTMLFormElement);
       const name = fd.getAll('name').toString();
+
       const currentCategories = category.map((item: any) => item.name);
       if (currentCategories.includes(name)) {
         toast.error('Category name already exists');
@@ -85,6 +86,8 @@ const Page = () => {
         toast.error('Category name already exists');
         return null;
       }
+      console.log(fd.getAll('files'));
+
       const uploadedFiles = await uploadFiles(fd);
       const url = uploadedFiles.map((img) => img.data?.url).toString();
       const key = uploadedFiles.map((img) => img.data?.key).toString();
@@ -159,7 +162,7 @@ const Page = () => {
               </div>
               <div className="flex  w-full justify-between  p-2 items-center ">
                 <Image
-                  src={cat.image.url}
+                  src={cat.image?.url}
                   alt="category image"
                   width={50}
                   height={100}

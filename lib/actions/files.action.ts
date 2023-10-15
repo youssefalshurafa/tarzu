@@ -20,6 +20,13 @@ export async function deleteFiles(oldImgKeys: any) {
     throw new Error(`Failed to delete banner : ${error.message}`);
   }
 }
+export async function deleteManyFiles(keys: string[]) {
+  try {
+    await utapi.deleteFiles(keys);
+  } catch (error: any) {
+    throw new Error(`Failed to delete banner : ${error.message}`);
+  }
+}
 
 export async function listFiles() {
   try {
