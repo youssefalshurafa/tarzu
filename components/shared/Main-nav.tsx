@@ -30,7 +30,6 @@ interface Props {
 
 const Mainnav = ({ category, userInfo }: Props) => {
   const router = useRouter();
-  console.log('userInfo:', userInfo);
 
   return (
     <nav className="flex justify-between px-6 py-3 bg-slate-50 drop-shadow-md">
@@ -44,7 +43,7 @@ const Mainnav = ({ category, userInfo }: Props) => {
               Menu
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {category.map((category, i) => (
+            {/* {category.map((category, i) => (
               <DropdownMenuItem
                 key={i}
                 className=" justify-center text-lg font-semibold cursor-pointer"
@@ -52,7 +51,7 @@ const Mainnav = ({ category, userInfo }: Props) => {
               >
                 {category.name}
               </DropdownMenuItem>
-            ))}
+            ))} */}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -65,7 +64,7 @@ const Mainnav = ({ category, userInfo }: Props) => {
         </h1>
       </div>
       <div className="hidden md:flex gap-4 font-semibold items-center">
-        {category.map((category, i) => (
+        {category?.map((category, i) => (
           <p key={i} className=" hover:cursor-pointer">
             {category.name}
           </p>

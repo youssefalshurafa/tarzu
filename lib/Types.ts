@@ -44,6 +44,6 @@ export type Res = {
 export type Category = {
   image: Res;
   name: string;
-  products: string[];
+  products: ProductType[];
   _id: string;
 };

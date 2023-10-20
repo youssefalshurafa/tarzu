@@ -8,9 +8,7 @@ import {
   validateFiles,
   validateThumbnail,
 } from '@/lib/validations/product';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { FormEvent, useEffect, useState } from 'react';
-import { Category, ProductType, Res, Thumbnail } from '@/lib/Types';
 import {
   Select,
   SelectContent,
@@ -20,30 +18,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { getCategory, getCategoryById } from '@/lib/actions/category.action';
-import {
-  createProduct,
-  deleteProduct,
-  getAllProducts,
-} from '@/lib/actions/products.action';
+import { getCategory } from '@/lib/actions/category.action';
+import { createProduct, getAllProducts } from '@/lib/actions/products.action';
 import { toast, Toaster } from 'react-hot-toast';
-import Image from 'next/image';
-import { Trash, Edit } from 'lucide-react';
-import {
-  deleteFiles,
-  uploadFiles,
-  uploadThumbnail,
-} from '@/lib/actions/files.action';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+
+import { uploadFiles, uploadThumbnail } from '@/lib/actions/files.action';
+
+import CurrentProducts from '../../components/CurrentProducts';
 
 const Page = () => {
   const [categories, setCategories] = useState<any>([]);
-  const [products, setProducts] = useState([]);
+  const [reloadFlag, setReloadFlag] = useState(false);
   const [isFormActive, setIsFormActive] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -69,16 +54,13 @@ const Page = () => {
   const getAllCategories = async () => {
     const response = await getCategory();
     setCategories(response.data);
-  };
-  const getProducts = async () => {
-    const response = await getAllProducts();
-    setProducts(response.data);
+    console.log(response);
   };
 
   useEffect(() => {
     getAllCategories();
-    getProducts();
   }, []);
+  console.log(categories);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -123,8 +105,8 @@ const Page = () => {
         const res = await createProduct(newProduct);
         if (res.success) {
           toast.dismiss();
+          setReloadFlag(!reloadFlag);
           toast.success('Product created!');
-          getAllProducts();
         } else {
           console.log('res', res);
 
@@ -151,8 +133,8 @@ const Page = () => {
         const res = await createProduct(newProduct);
         if (res.success) {
           toast.dismiss();
+          setReloadFlag(!reloadFlag);
           toast.success('Product created!');
-          getAllProducts();
         } else {
           console.log('res', res);
 
@@ -193,30 +175,6 @@ const Page = () => {
         newImages.push(file);
       }
       setFormData({ ...formData, files: newImages || null });
-    }
-  };
-
-  const handleDelete = async (product: ProductType) => {
-    try {
-      toast.loading('Deleting...');
-      if (product.images.length) {
-        const oldImgKeys = product.images.map((product) => product.key);
-        let keys = oldImgKeys.toString();
-        let finalKeys = keys.split(',');
-        await deleteFiles(finalKeys);
-        await deleteFiles(product.thumbnail?.imgKey);
-        await deleteProduct(product._id);
-
-        toast.dismiss();
-        toast.success(`Deleted Product code ${product.code}`);
-      } else {
-        await deleteProduct(product._id);
-        await deleteFiles(product.thumbnail?.imgKey);
-        toast.dismiss();
-        toast.success(`Deleted Product code ${product.code}`);
-      }
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -342,43 +300,7 @@ const Page = () => {
           </Button>
         </form>
       )}
-      <h2 className="font-bold text-3xl mb-6">Current products</h2>
-      <div className=" flex flex-col w-full gap-2 ">
-        {categories.map((category: Category) => (
-          <Accordion type="single" collapsible>
-            <AccordionItem value="item-1">
-              <AccordionTrigger>{category.name}</AccordionTrigger>
-              <AccordionContent>
-                {category.products?.map((product: any) => (
-                  <section className="w-full flex flex-col h-full">
-                    <div className="h-full items-center">
-                      {product.thumbnail ? (
-                        <Image
-                          src={product.thumbnail.imgUrl}
-                          alt="thumbnail"
-                          width={240}
-                          height={300}
-                        />
-                      ) : (
-                        ''
-                      )}
-                    </div>
-                    <div>
-                      <p>{product.code}</p>
-                      <p>{product.category.name}</p>
-                    </div>
-                    <div className="flex gap-4 w-max">
-                      <Edit size={24} />
-
-                      <Trash onClick={() => handleDelete(product)} size={24} />
-                    </div>
-                  </section>
-                ))}
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        ))}
-      </div>
+      <CurrentProducts categories={categories} reloadFlag={reloadFlag} />
     </>
   );
 };
