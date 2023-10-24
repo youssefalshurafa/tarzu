@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server';
 export async function GET(req: Request) {
   try {
     await connectToDB();
+    const product = await Product.find();
     const category = await Category.find().populate('products');
 
     if (category && category.length) {
