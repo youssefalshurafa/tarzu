@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   ProductValidation,
+  editProductValidation,
   validateFiles,
   validateThumbnail,
 } from '@/lib/validations/product';
@@ -18,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { createProduct } from '@/lib/actions/products.action';
+import { createProduct, editProduct } from '@/lib/actions/products.action';
 import { toast, Toaster } from 'react-hot-toast';
 import { X } from 'lucide-react';
 import { uploadFiles, uploadThumbnail } from '@/lib/actions/files.action';
@@ -35,7 +36,6 @@ const EditProductForm: React.FC<Props> = ({
   product,
   handleCancel,
 }) => {
-  const [isFormActive, setIsFormActive] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [formData, setFormData] = useState<{
@@ -147,7 +147,25 @@ const EditProductForm: React.FC<Props> = ({
       }
     }
   };
+  const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      // await editProductValidation.parse(formData);
+      // const ThumbError = validateThumbnail(formData.thumbnail);
+      // if (ThumbError) {
+      //   setErrors({ thumbnail: ThumbError });
+      //   return;
+      // }
+      // const filesError = validateFiles(formData.files);
+      // if (filesError) {
+      //   setErrors({ files: filesError });
+      //   return;
+      // }
 
+      console.log('formData :', formData);
+      setErrors({});
+    } catch (error) {}
+  };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -171,25 +189,23 @@ const EditProductForm: React.FC<Props> = ({
       setFormData({ ...formData, files: newImages || null });
     }
   };
+
   return (
     <div>
       <Toaster position="top-center"></Toaster>
       <div className="mb-2 w-full flex justify-end ">
-        <div className="w-max  rounded-xl ">
+        <div className="w-max hover:cursor-pointer  rounded-xl ">
           <X onClick={handleCancel} size={24} />
         </div>
       </div>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col justify-start gap-4"
-      >
+      <form onSubmit={handleEdit} className="flex flex-col justify-start gap-4">
         <div className="flex flex-col gap-2 font-semibold">
           <p>Title *</p>
           <Input
             type="text"
             className="border no-focus"
             name="title"
-            defaultValue={product.title}
+            value={product.title}
             onChange={handleInputChange}
           />
           {errors['title'] && <p style={{ color: 'red' }}>{errors['title']}</p>}
@@ -257,12 +273,16 @@ const EditProductForm: React.FC<Props> = ({
             <p style={{ color: 'red' }}>{errors['thumbnail']}</p>
           )}
         </div>
-        <Image
-          src={product.thumbnail?.imgUrl}
-          alt="thumbnail"
-          width={50}
-          height={50}
-        />
+        {product.thumbnail ? (
+          <Image
+            src={product.thumbnail.imgUrl}
+            alt="thumbnail"
+            width={50}
+            height={50}
+          />
+        ) : (
+          ''
+        )}
 
         <div className="flex flex-col gap-2 font-semibold">
           <p>Images</p>

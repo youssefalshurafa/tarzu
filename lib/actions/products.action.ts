@@ -42,6 +42,22 @@ export async function deleteProduct(productId: any) {
     const data = await res.json();
     return data;
   } catch (error: any) {
-    throw new Error(`Failed to delete category: ${error.message}`);
+    throw new Error(`Failed to delete product: ${error.message}`);
+  }
+}
+
+export async function editProduct(product: ProductType) {
+  try {
+    const res = await fetch('/api/admin-products/edit-product', {
+      method: 'PUT',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(product),
+    });
+    const data = await res.json();
+    return data;
+  } catch (error: any) {
+    throw new Error(`Failed to create product: ${error.message}`);
   }
 }

@@ -44,17 +44,14 @@ const CurrentProducts: React.FC<Props> = ({ categories }) => {
       console.log(error);
     }
   };
-  const handleCancel = () => {
-    console.log('clicked');
 
+  const handleCancel = () => {
     setEditActive('');
   };
-  console.log(categories);
 
   return (
     <>
       <Toaster position="top-center"></Toaster>
-
       <h2 className="font-bold text-3xl mb-6">Current products</h2>
       <div className=" flex flex-col w-full gap-2 ">
         {categories?.map((category) => (
@@ -69,7 +66,7 @@ const CurrentProducts: React.FC<Props> = ({ categories }) => {
                         key={product._id}
                         className="w-full flex flex-col h-full"
                       >
-                        <div className="h-full items-center">
+                        <div className="h-full  items-center">
                           {product.thumbnail ? (
                             <Image
                               src={product.thumbnail.imgUrl}
@@ -84,12 +81,16 @@ const CurrentProducts: React.FC<Props> = ({ categories }) => {
                         <div className="flex">
                           <p>{product.code}</p>
                         </div>
-                        <div className="flex gap-4 w-max">
+                        <div className="flex gap-4 w-max ">
                           <Edit
+                            className=" hover:cursor-pointer"
                             onClick={() => setEditActive(product._id)}
                             size={24}
-                          />
+                          >
+                            Edit
+                          </Edit>
                           <Trash
+                            className=" hover:cursor-pointer"
                             onClick={() => handleDelete(product)}
                             size={24}
                           />

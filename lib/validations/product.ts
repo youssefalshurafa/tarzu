@@ -19,6 +19,18 @@ export const ProductValidation = z.object({
   category: z.string().optional(),
   stock: z.string().optional(),
 });
+export const editProductValidation = z.object({
+  title: z
+    .string()
+    .min(3, { message: 'Title must be more than 3 chars' })
+    .max(30)
+    .optional(),
+  code: z.string().min(3).max(30).optional(),
+  description: z.string().optional(),
+  price: z.string().optional(),
+  category: z.string().optional(),
+  stock: z.string().optional(),
+});
 
 export const validateThumbnail = (file: File | null) => {
   if (!file) {

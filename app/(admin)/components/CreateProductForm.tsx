@@ -24,7 +24,6 @@ import { toast, Toaster } from 'react-hot-toast';
 import { uploadFiles, uploadThumbnail } from '@/lib/actions/files.action';
 
 const CreateProductForm = ({ categories }: any) => {
-  const [reloadFlag, setReloadFlag] = useState(false);
   const [isFormActive, setIsFormActive] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -51,6 +50,7 @@ const CreateProductForm = ({ categories }: any) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      await ProductValidation.parse(formData);
       const ThumbError = validateThumbnail(formData.thumbnail);
       if (ThumbError) {
         setErrors({ thumbnail: ThumbError });
@@ -61,7 +61,7 @@ const CreateProductForm = ({ categories }: any) => {
         setErrors({ files: filesError });
         return;
       }
-      await ProductValidation.parse(formData);
+
       console.log('formData :', formData);
       setErrors({});
       if (formData.files) {
