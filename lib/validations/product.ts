@@ -19,23 +19,24 @@ export const ProductValidation = z.object({
   category: z.string().optional(),
   stock: z.string().optional(),
 });
-export const editProductValidation = z.object({
-  title: z
-    .string()
-    .min(3, { message: 'Title must be more than 3 chars' })
-    .max(30)
-    .optional(),
-  code: z.string().min(3).max(30).optional(),
-  description: z.string().optional(),
-  price: z.string().optional(),
-  category: z.string().optional(),
-  stock: z.string().optional(),
-});
 
 export const validateThumbnail = (file: File | null) => {
   if (!file) {
     return 'Image is required';
   }
+
+  if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+    return 'Invalid image type. Please select a JPG, JPEG, or PNG file.';
+  }
+
+  if (file.size > 8 * 1024 * 1024) {
+    return 'Image size exceeds the maximum limit (8MB).';
+  }
+
+  return ''; // No error
+};
+export const validateEditThumbnail = (file: File | null) => {
+  if (!file) return null;
 
   if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
     return 'Invalid image type. Please select a JPG, JPEG, or PNG file.';

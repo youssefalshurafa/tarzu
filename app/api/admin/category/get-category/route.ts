@@ -7,7 +7,10 @@ export async function GET(req: Request) {
   try {
     await connectToDB();
     const product = await Product.find();
-    const category = await Category.find().populate('products');
+    const category = await Category.find().populate({
+      path: 'products',
+      populate: { path: 'category', model: 'Category' },
+    });
 
     if (category && category.length) {
       return NextResponse.json({ success: true, data: category });

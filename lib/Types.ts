@@ -21,7 +21,7 @@ export type Roles = {
 };
 
 export type ProductType = {
-  _id: string;
+  _id?: string;
   title: string;
   code: string;
   description?: string;

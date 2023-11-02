@@ -5,11 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
   ProductValidation,
-  editProductValidation,
+  validateEditThumbnail,
   validateFiles,
   validateThumbnail,
 } from '@/lib/validations/product';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -22,9 +22,14 @@ import {
 import { createProduct, editProduct } from '@/lib/actions/products.action';
 import { toast, Toaster } from 'react-hot-toast';
 import { X } from 'lucide-react';
-import { uploadFiles, uploadThumbnail } from '@/lib/actions/files.action';
+import {
+  deleteFiles,
+  uploadFiles,
+  uploadThumbnail,
+} from '@/lib/actions/files.action';
 import Image from 'next/image';
-import { Category, ProductType, Res } from '@/lib/Types';
+import { Category, ProductType, Res, Thumbnail } from '@/lib/Types';
+import { useProductContext } from '@/lib/context/productContext';
 
 interface Props {
   handleCancel: () => void;
@@ -36,8 +41,10 @@ const EditProductForm: React.FC<Props> = ({
   product,
   handleCancel,
 }) => {
+  const { getCategories } = useProductContext();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [oldCategory, setOldCategory] = useState<string>('');
   const [formData, setFormData] = useState<{
     title: string;
     code: string;
@@ -48,20 +55,25 @@ const EditProductForm: React.FC<Props> = ({
     thumbnail: File | null;
     files: File[] | null;
   }>({
-    title: '',
-    code: '',
-    description: '',
-    price: '',
-    category: '',
-    stock: '',
+    title: product.title,
+    code: product.code,
+    description: product.description || '',
+    price: product.price,
+    category: product.category._id,
+    stock: product.stock || '',
     thumbnail: null,
     files: null,
   });
+  useEffect(() => {
+    setOldCategory(product.category._id);
+  }, []);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  console.log('formData :', formData);
+
+  const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const ThumbError = validateThumbnail(formData.thumbnail);
+      const ThumbError = validateEditThumbnail(formData.thumbnail);
       if (ThumbError) {
         setErrors({ thumbnail: ThumbError });
         return;
@@ -71,20 +83,82 @@ const EditProductForm: React.FC<Props> = ({
         setErrors({ files: filesError });
         return;
       }
-      await ProductValidation.parse(formData);
-      console.log('formData :', formData);
+
       setErrors({});
-      if (formData.files) {
-        toast.loading('Creating...');
+
+      if (formData.thumbnail && !formData.files) {
+        const fd = new FormData(e.target as HTMLFormElement);
+        const uploadedThumbnail = await uploadThumbnail(fd);
+        const editedProduct = {
+          _id: product._id,
+          title: formData.title,
+          code: formData.code,
+          price: formData.price,
+          oldCategory: oldCategory,
+          category: formData.category,
+          thumbnail: {
+            imgKey: uploadedThumbnail.map((item) => item.data?.key).toString(),
+            imgUrl: uploadedThumbnail.map((item) => item.data?.url).toString(),
+          },
+        };
+        deleteFiles(product.thumbnail?.imgKey);
+        const res = await editProduct(editedProduct);
+        if (res.success) {
+          console.log('product: ', product);
+          toast.dismiss();
+          handleCancel();
+          await getCategories();
+          toast.success('Product updated!');
+        } else {
+          console.log('res', res);
+
+          toast.dismiss();
+          toast.error('error');
+        }
+      } else if (formData.files && !formData.thumbnail) {
+        const fd = new FormData(e.target as HTMLFormElement);
+        const uploadedFiles = await uploadFiles(fd);
+        const editedProduct = {
+          _id: product._id,
+          title: formData.title,
+          code: formData.code,
+          price: formData.price,
+          oldCategory: oldCategory,
+          category: formData.category,
+          images: [
+            {
+              key: uploadedFiles.map((item) => item.data?.key).toString(),
+              url: uploadedFiles.map((item) => item.data?.url).toString(),
+            },
+          ],
+        };
+        const oldImgKeys = product.images.map((product) => product.key);
+
+        await deleteFiles(oldImgKeys);
+        const res = await editProduct(editedProduct);
+        if (res.success) {
+          console.log('product: ', product);
+          toast.dismiss();
+          handleCancel();
+          await getCategories();
+          toast.success('Product updated!');
+        } else {
+          console.log('res', res);
+
+          toast.dismiss();
+          toast.error('error');
+        }
+      } else if (formData.files && formData.thumbnail) {
         const fd = new FormData(e.target as HTMLFormElement);
 
         const uploadedThumbnail = await uploadThumbnail(fd);
         const uploadedFiles = await uploadFiles(fd);
-
-        const newProduct = {
+        const editedProduct = {
+          _id: product._id,
           title: formData.title,
           code: formData.code,
           price: formData.price,
+          oldCategory: oldCategory,
           category: formData.category,
           thumbnail: {
             imgKey: uploadedThumbnail.map((item) => item.data?.key).toString(),
@@ -97,74 +171,49 @@ const EditProductForm: React.FC<Props> = ({
             },
           ],
         };
-        console.log('newProduct: ', newProduct);
-        const res = await createProduct(newProduct);
+        const oldImgKeys = product.images.map((product) => product.key);
+
+        await deleteFiles(oldImgKeys);
+        await deleteFiles(product.thumbnail?.imgKey);
+        const res = await editProduct(editedProduct);
         if (res.success) {
           toast.dismiss();
-          location.reload();
-          toast.success('Product created!');
+          handleCancel();
+          await getCategories();
+          toast.success('Product updated!');
         } else {
           console.log('res', res);
 
           toast.dismiss();
           toast.error('error');
         }
+        console.log('editProduct :', editedProduct);
+      }
+
+      const editedProduct = {
+        _id: product._id,
+        title: formData.title,
+        code: formData.code,
+        price: formData.price,
+        oldCategory: oldCategory,
+        category: formData.category,
+      };
+      const res = await editProduct(editedProduct);
+      if (res.success) {
+        toast.dismiss();
+        handleCancel();
+        await getCategories();
+        toast.success('Product updated!');
       } else {
-        toast.loading('Creating...');
-        const fd = new FormData(e.target as HTMLFormElement);
+        console.log('res', res);
 
-        const uploadedThumbnail = await uploadThumbnail(fd);
-
-        const newProduct = {
-          title: formData.title,
-          code: formData.code,
-          price: formData.price,
-          category: formData.category,
-          thumbnail: {
-            imgKey: uploadedThumbnail.map((item) => item.data?.key).toString(),
-            imgUrl: uploadedThumbnail.map((item) => item.data?.url).toString(),
-          },
-        };
-        console.log('newProduct: ', newProduct);
-        const res = await createProduct(newProduct);
-        if (res.success) {
-          toast.dismiss();
-          location.reload();
-          toast.success('Product created!');
-        } else {
-          toast.dismiss();
-          toast.error('error');
-        }
+        toast.dismiss();
+        toast.error('error');
       }
+      console.log('editProduct :', editedProduct);
     } catch (error) {
-      toast.dismiss();
-      if (error instanceof z.ZodError) {
-        const fieldErrors: { [key: string]: string } = {};
-        error.issues.forEach((issue) => {
-          fieldErrors[issue.path.join('.')] = issue.message;
-        });
-        setErrors(fieldErrors);
-      }
+      console.log(error);
     }
-  };
-  const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    try {
-      // await editProductValidation.parse(formData);
-      // const ThumbError = validateThumbnail(formData.thumbnail);
-      // if (ThumbError) {
-      //   setErrors({ thumbnail: ThumbError });
-      //   return;
-      // }
-      // const filesError = validateFiles(formData.files);
-      // if (filesError) {
-      //   setErrors({ files: filesError });
-      //   return;
-      // }
-
-      console.log('formData :', formData);
-      setErrors({});
-    } catch (error) {}
   };
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -205,7 +254,7 @@ const EditProductForm: React.FC<Props> = ({
             type="text"
             className="border no-focus"
             name="title"
-            value={product.title}
+            defaultValue={product.title}
             onChange={handleInputChange}
           />
           {errors['title'] && <p style={{ color: 'red' }}>{errors['title']}</p>}
@@ -248,7 +297,7 @@ const EditProductForm: React.FC<Props> = ({
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>Categories</SelectLabel>
-                {categories.map((cat: any) => (
+                {categories.map((cat: Category) => (
                   <SelectItem key={cat._id} value={cat._id}>
                     {cat.name}
                   </SelectItem>

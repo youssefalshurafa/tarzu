@@ -46,7 +46,7 @@ export async function deleteProduct(productId: any) {
   }
 }
 
-export async function editProduct(product: ProductType) {
+export async function editProduct(product: any) {
   try {
     const res = await fetch('/api/admin-products/edit-product', {
       method: 'PUT',

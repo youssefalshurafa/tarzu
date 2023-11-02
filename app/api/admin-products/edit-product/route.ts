@@ -1,4 +1,5 @@
 import { connectToDB } from '@/database/mongoose';
+import Category from '@/models/category.model';
 import Product from '@/models/product.model';
 import { NextResponse } from 'next/server';
 
@@ -11,9 +12,19 @@ export async function PUT(req: Request) {
       { _id: data._id },
       {
         title: data.title,
+        code: data.code,
+        price: data.price,
+        category: data.category,
+        thumbnail: data.thumbnail,
       },
       { upsert: true }
     );
+    await Category.findByIdAndUpdate(data.oldCategory, {
+      $pull: { products: product._id },
+    });
+    await Category.findByIdAndUpdate(data.category, {
+      $push: { products: product._id },
+    });
     console.log('product: ', product);
     if (product) {
       return NextResponse.json({

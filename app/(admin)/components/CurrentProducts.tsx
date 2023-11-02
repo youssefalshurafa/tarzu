@@ -12,33 +12,36 @@ import {
 import { toast, Toaster } from 'react-hot-toast';
 import { deleteFiles } from '@/lib/actions/files.action';
 import { deleteProduct } from '@/lib/actions/products.action';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import EditProductForm from './EditProductForm';
+import { useProductContext } from '@/lib/context/productContext';
 
-interface Props {
-  categories: Category[];
-}
-const CurrentProducts: React.FC<Props> = ({ categories }) => {
+const CurrentProducts = () => {
   const [editActive, setEditActive] = useState<any>('');
+  const { getCategories, categories } = useProductContext();
+
+  useEffect(() => {
+    getCategories();
+  }, []);
+
   const handleDelete = async (product: ProductType) => {
     try {
       toast.loading('Deleting...');
       if (product.images.length) {
         const oldImgKeys = product.images.map((product) => product.key);
-        let keys = oldImgKeys.toString();
-        let finalKeys = keys.split(',');
-        await deleteFiles(finalKeys);
+
+        await deleteFiles(oldImgKeys);
         await deleteFiles(product.thumbnail?.imgKey);
         await deleteProduct(product._id);
-
+        await getCategories();
         toast.dismiss();
         toast.success(`Deleted Product code ${product.code}`);
       } else {
         await deleteProduct(product._id);
         await deleteFiles(product.thumbnail?.imgKey);
+        await getCategories();
         toast.dismiss();
         toast.success(`Deleted Product code ${product.code}`);
-        location.reload();
       }
     } catch (error) {
       console.log(error);
@@ -60,7 +63,7 @@ const CurrentProducts: React.FC<Props> = ({ categories }) => {
               <AccordionTrigger>{category.name}</AccordionTrigger>
               <AccordionContent>
                 <div className="grid grid-cols-2 gap-2">
-                  {category.products?.map((product) => (
+                  {category.products?.map((product: ProductType) => (
                     <div>
                       <section
                         key={product._id}

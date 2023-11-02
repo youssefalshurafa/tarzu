@@ -4,6 +4,7 @@ import Footer from '@/components/shared/Footer';
 import '../globals.css';
 import Sidebar from './components/Sidebar';
 import { Inter } from 'next/font/google';
+import { ProductProvider } from '@/lib/context/productContext';
 
 export const metadata = {
   title: 'Arzu-admin',

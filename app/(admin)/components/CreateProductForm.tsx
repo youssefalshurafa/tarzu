@@ -22,21 +22,24 @@ import { createProduct } from '@/lib/actions/products.action';
 import { toast, Toaster } from 'react-hot-toast';
 
 import { uploadFiles, uploadThumbnail } from '@/lib/actions/files.action';
+import { useProductContext } from '@/lib/context/productContext';
 
+interface FormData {
+  title: string;
+  code: string;
+  description: string;
+  price: string;
+  category: string;
+  stock: string;
+  thumbnail: File | null;
+  files: File[] | null;
+}
 const CreateProductForm = ({ categories }: any) => {
   const [isFormActive, setIsFormActive] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [formData, setFormData] = useState<{
-    title: string;
-    code: string;
-    description: string;
-    price: string;
-    category: string;
-    stock: string;
-    thumbnail: File | null;
-    files: File[] | null;
-  }>({
+  const { getCategories } = useProductContext();
+  const [formData, setFormData] = useState<FormData>({
     title: '',
     code: '',
     description: '',
@@ -67,9 +70,14 @@ const CreateProductForm = ({ categories }: any) => {
       if (formData.files) {
         toast.loading('Creating...');
         const fd = new FormData(e.target as HTMLFormElement);
-
+        console.log('before image Upload');
         const uploadedThumbnail = await uploadThumbnail(fd);
         const uploadedFiles = await uploadFiles(fd);
+
+        const imagesArray = uploadedFiles.map(
+          ({ data: { url, key } }: any) => ({ url, key })
+        );
+        console.log('before newProduct');
 
         const newProduct = {
           title: formData.title,
@@ -80,18 +88,15 @@ const CreateProductForm = ({ categories }: any) => {
             imgKey: uploadedThumbnail.map((item) => item.data?.key).toString(),
             imgUrl: uploadedThumbnail.map((item) => item.data?.url).toString(),
           },
-          images: [
-            {
-              key: uploadedFiles.map((item) => item.data?.key).toString(),
-              url: uploadedFiles.map((item) => item.data?.url).toString(),
-            },
-          ],
+
+          images: imagesArray,
         };
-        console.log('newProduct: ', newProduct);
+
         const res = await createProduct(newProduct);
         if (res.success) {
           toast.dismiss();
-          location.reload();
+          setIsFormActive(!isFormActive);
+          await getCategories();
           toast.success('Product created!');
         } else {
           console.log('res', res);
@@ -119,7 +124,8 @@ const CreateProductForm = ({ categories }: any) => {
         const res = await createProduct(newProduct);
         if (res.success) {
           toast.dismiss();
-          location.reload();
+          setIsFormActive(!isFormActive);
+          await getCategories();
           toast.success('Product created!');
         } else {
           toast.dismiss();
