@@ -23,6 +23,7 @@ import { toast, Toaster } from 'react-hot-toast';
 
 import { uploadFiles, uploadThumbnail } from '@/lib/actions/files.action';
 import { useProductContext } from '@/lib/context/productContext';
+import { Loader2 } from 'lucide-react';
 
 interface FormData {
   title: string;
@@ -53,6 +54,7 @@ const CreateProductForm = ({ categories }: any) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       await ProductValidation.parse(formData);
       const ThumbError = validateThumbnail(formData.thumbnail);
       if (ThumbError) {
@@ -94,18 +96,20 @@ const CreateProductForm = ({ categories }: any) => {
 
         const res = await createProduct(newProduct);
         if (res.success) {
+          setIsLoading(false);
           toast.dismiss();
           setIsFormActive(!isFormActive);
           await getCategories();
           toast.success('Product created!');
         } else {
           console.log('res', res);
-
+          setIsLoading(false);
           toast.dismiss();
           toast.error('error');
         }
       } else {
         toast.loading('Creating...');
+        setIsLoading(true);
         const fd = new FormData(e.target as HTMLFormElement);
 
         const uploadedThumbnail = await uploadThumbnail(fd);
@@ -123,17 +127,20 @@ const CreateProductForm = ({ categories }: any) => {
         console.log('newProduct: ', newProduct);
         const res = await createProduct(newProduct);
         if (res.success) {
+          setIsLoading(false);
           toast.dismiss();
           setIsFormActive(!isFormActive);
           await getCategories();
           toast.success('Product created!');
         } else {
+          setIsLoading(false);
           toast.dismiss();
           toast.error('error');
         }
       }
     } catch (error) {
       toast.dismiss();
+      setIsLoading(false);
       if (error instanceof z.ZodError) {
         const fieldErrors: { [key: string]: string } = {};
         error.issues.forEach((issue) => {
@@ -171,7 +178,7 @@ const CreateProductForm = ({ categories }: any) => {
     <>
       <Toaster position="top-center"></Toaster>
       <Button
-        className="bg-purple-700 mb-6"
+        className="bg-purple-700 mb-6 w-max"
         onClick={() => setIsFormActive(!isFormActive)}
       >
         Create a new product
@@ -283,10 +290,16 @@ const CreateProductForm = ({ categories }: any) => {
               <p style={{ color: 'red' }}>{errors['description']}</p>
             )}
           </div>
-
-          <Button type="submit" className=" bg-purple-700">
-            {isLoading ? 'Loading...' : 'Create'}
-          </Button>
+          {isLoading ? (
+            <Button disabled>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Creating
+            </Button>
+          ) : (
+            <Button type="submit" className=" bg-purple-700">
+              Create
+            </Button>
+          )}
         </form>
       )}
     </>

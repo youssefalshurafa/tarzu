@@ -1,6 +1,16 @@
 'use client';
-
-import { Category, ProductType } from '@/lib/Types';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { ProductType } from '@/lib/Types';
 import Image from 'next/image';
 import { Trash, Edit } from 'lucide-react';
 import {
@@ -15,6 +25,7 @@ import { deleteProduct } from '@/lib/actions/products.action';
 import { useEffect, useState } from 'react';
 import EditProductForm from './EditProductForm';
 import { useProductContext } from '@/lib/context/productContext';
+import { Button } from '@/components/ui/button';
 
 const CurrentProducts = () => {
   const [editActive, setEditActive] = useState<any>('');
@@ -62,7 +73,7 @@ const CurrentProducts = () => {
             <AccordionItem value="item-1">
               <AccordionTrigger>{category.name}</AccordionTrigger>
               <AccordionContent>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
                   {category.products?.map((product: ProductType) => (
                     <div>
                       <section
@@ -81,22 +92,47 @@ const CurrentProducts = () => {
                             ''
                           )}
                         </div>
-                        <div className="flex">
-                          <p>{product.code}</p>
+                        <div className="flex w-full ">
+                          <p className="text-lg font-semibold">
+                            {product.code}
+                          </p>
                         </div>
                         <div className="flex gap-4 w-max ">
-                          <Edit
-                            className=" hover:cursor-pointer"
+                          <div
                             onClick={() => setEditActive(product._id)}
-                            size={24}
+                            className="flex items-center gap-1 hover:cursor-pointer"
                           >
-                            Edit
-                          </Edit>
-                          <Trash
-                            className=" hover:cursor-pointer"
-                            onClick={() => handleDelete(product)}
-                            size={24}
-                          />
+                            <Edit size={24} />
+                            <p className="font-bold">Edit</p>
+                          </div>
+                          <div className="flex items-center gap-1 text-red-400 hover:cursor-pointer">
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button variant="destructive" size="sm">
+                                  Delete
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Are you sure you want to delete?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This action cannot be undone. This will
+                                    permanently delete the product.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction>
+                                    <p onClick={() => handleDelete(product)}>
+                                      Yes
+                                    </p>
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </div>
                         </div>
                         {editActive === product._id && (
                           <div className="absolute">

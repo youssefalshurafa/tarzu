@@ -25,7 +25,7 @@ export async function PUT(req: Request) {
     await Category.findByIdAndUpdate(data.category, {
       $push: { products: product._id },
     });
-    console.log('product: ', product);
+
     if (product) {
       return NextResponse.json({
         success: true,

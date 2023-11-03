@@ -9,8 +9,10 @@ const Page = async () => {
   return (
     <>
       <ProductProvider>
-        <CreateProductForm categories={categories.data} />
-        <CurrentProducts />
+        <div className="flex flex-col gap-4 ">
+          <CreateProductForm categories={categories.data} />
+          <CurrentProducts />
+        </div>
       </ProductProvider>
     </>
   );

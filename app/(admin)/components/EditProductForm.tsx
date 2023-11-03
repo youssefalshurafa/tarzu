@@ -1,10 +1,8 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import * as z from 'zod';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  ProductValidation,
   validateEditThumbnail,
   validateFiles,
   validateThumbnail,
@@ -19,16 +17,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { createProduct, editProduct } from '@/lib/actions/products.action';
+import { editProduct } from '@/lib/actions/products.action';
 import { toast, Toaster } from 'react-hot-toast';
-import { X } from 'lucide-react';
+import { Loader2, X } from 'lucide-react';
 import {
   deleteFiles,
   uploadFiles,
   uploadThumbnail,
 } from '@/lib/actions/files.action';
 import Image from 'next/image';
-import { Category, ProductType, Res, Thumbnail } from '@/lib/Types';
+import { Category, ProductType } from '@/lib/Types';
 import { useProductContext } from '@/lib/context/productContext';
 
 interface Props {
@@ -36,25 +34,28 @@ interface Props {
   categories: Category[];
   product: ProductType;
 }
+interface FormData {
+  title: string;
+  code: string;
+  description: string;
+  price: string;
+  category: string;
+  stock: string;
+  thumbnail: File | null;
+  files: File[] | null;
+}
 const EditProductForm: React.FC<Props> = ({
   categories,
   product,
   handleCancel,
 }) => {
   const { getCategories } = useProductContext();
+  const [base64Image, setBase64Image] = useState<string | null>(null);
+  const [base64Images, setBase64Images] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [oldCategory, setOldCategory] = useState<string>('');
-  const [formData, setFormData] = useState<{
-    title: string;
-    code: string;
-    description: string;
-    price: string;
-    category: string;
-    stock: string;
-    thumbnail: File | null;
-    files: File[] | null;
-  }>({
+  const [formData, setFormData] = useState<FormData>({
     title: product.title,
     code: product.code,
     description: product.description || '',
@@ -73,6 +74,7 @@ const EditProductForm: React.FC<Props> = ({
   const handleEdit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       const ThumbError = validateEditThumbnail(formData.thumbnail);
       if (ThumbError) {
         setErrors({ thumbnail: ThumbError });
@@ -104,14 +106,14 @@ const EditProductForm: React.FC<Props> = ({
         deleteFiles(product.thumbnail?.imgKey);
         const res = await editProduct(editedProduct);
         if (res.success) {
-          console.log('product: ', product);
+          setIsLoading(false);
           toast.dismiss();
           handleCancel();
           await getCategories();
           toast.success('Product updated!');
         } else {
           console.log('res', res);
-
+          setIsLoading(false);
           toast.dismiss();
           toast.error('error');
         }
@@ -137,14 +139,14 @@ const EditProductForm: React.FC<Props> = ({
         await deleteFiles(oldImgKeys);
         const res = await editProduct(editedProduct);
         if (res.success) {
-          console.log('product: ', product);
+          setIsLoading(false);
           toast.dismiss();
           handleCancel();
           await getCategories();
           toast.success('Product updated!');
         } else {
           console.log('res', res);
-
+          setIsLoading(false);
           toast.dismiss();
           toast.error('error');
         }
@@ -177,13 +179,14 @@ const EditProductForm: React.FC<Props> = ({
         await deleteFiles(product.thumbnail?.imgKey);
         const res = await editProduct(editedProduct);
         if (res.success) {
+          setIsLoading(false);
           toast.dismiss();
           handleCancel();
           await getCategories();
           toast.success('Product updated!');
         } else {
           console.log('res', res);
-
+          setIsLoading(false);
           toast.dismiss();
           toast.error('error');
         }
@@ -200,18 +203,20 @@ const EditProductForm: React.FC<Props> = ({
       };
       const res = await editProduct(editedProduct);
       if (res.success) {
+        setIsLoading(false);
         toast.dismiss();
         handleCancel();
         await getCategories();
         toast.success('Product updated!');
       } else {
         console.log('res', res);
-
+        setIsLoading(false);
         toast.dismiss();
         toast.error('error');
       }
       console.log('editProduct :', editedProduct);
     } catch (error) {
+      setIsLoading(false);
       console.log(error);
     }
   };
@@ -225,10 +230,28 @@ const EditProductForm: React.FC<Props> = ({
       if (!files) return null;
       setFormData({ ...formData, [name]: files[0] || null });
     }
+    const file = e.target.files?.[0];
+
+    if (file) {
+      convertFileToBase64(file);
+    }
   };
+  const convertFileToBase64 = (file: File) => {
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      if (typeof reader.result === 'string') {
+        setBase64Image(reader.result);
+      }
+    };
+
+    reader.readAsDataURL(file);
+  };
+
   const handleFilesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
+      convertFilesToBase64(files);
       const newImages: File[] = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -238,7 +261,23 @@ const EditProductForm: React.FC<Props> = ({
       setFormData({ ...formData, files: newImages || null });
     }
   };
+  const convertFilesToBase64 = (files: FileList) => {
+    const newBase64Images: string[] = [];
 
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          newBase64Images.push(reader.result);
+          setBase64Images([...newBase64Images]);
+        }
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
   return (
     <div>
       <Toaster position="top-center"></Toaster>
@@ -322,15 +361,16 @@ const EditProductForm: React.FC<Props> = ({
             <p style={{ color: 'red' }}>{errors['thumbnail']}</p>
           )}
         </div>
-        {product.thumbnail ? (
+
+        {formData.thumbnail && base64Image ? (
+          <Image src={base64Image} alt="thumbnail" width={50} height={50} />
+        ) : (
           <Image
-            src={product.thumbnail.imgUrl}
+            src={product.thumbnail?.imgUrl || ''}
             alt="thumbnail"
             width={50}
             height={50}
           />
-        ) : (
-          ''
         )}
 
         <div className="flex flex-col gap-2 font-semibold">
@@ -343,6 +383,17 @@ const EditProductForm: React.FC<Props> = ({
             onChange={handleFilesChange}
           />
           {errors['files'] && <p style={{ color: 'red' }}>{errors['files']}</p>}
+        </div>
+        <div className="flex gap-2">
+          {formData.files?.length && base64Images.length
+            ? base64Images.map((base64, index) => (
+                <div key={index} style={{ marginRight: 10, marginBottom: 10 }}>
+                  <Image src={base64} alt="thumbnail" width={50} height={50} />{' '}
+                </div>
+              ))
+            : product.images.map((image) => (
+                <Image src={image.url} alt="thumbnail" width={50} height={50} />
+              ))}
         </div>
 
         <div className="flex flex-col gap-2 font-semibold">
@@ -359,9 +410,16 @@ const EditProductForm: React.FC<Props> = ({
           )}
         </div>
 
-        <Button type="submit" className=" bg-purple-700">
-          {isLoading ? 'Loading...' : 'Edit'}
-        </Button>
+        {isLoading ? (
+          <Button disabled>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Updating
+          </Button>
+        ) : (
+          <Button type="submit" className=" bg-purple-700">
+            Edit
+          </Button>
+        )}
       </form>
     </div>
   );
