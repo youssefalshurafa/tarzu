@@ -8,7 +8,6 @@ import { getCategory } from '@/lib/actions/category.action';
 const Navbar = async () => {
   const response = await getCategory();
   const category = response.data;
-  console.log('response :', response);
 
   const user = await currentUser();
   if (!user) {
