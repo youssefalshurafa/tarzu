@@ -1,5 +1,7 @@
 import { Category } from '@/lib/Types';
 import Image from 'next/image';
+import Link from 'next/link';
+
 import React from 'react';
 
 interface Props {
@@ -8,20 +10,20 @@ interface Props {
 const CategoriesSection: React.FC<Props> = ({ categories }) => {
   return (
     <>
-      <div className="w-full grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4  ">
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 mt-4 ">
         {categories.map((category) => (
-          <div className="relative  overflow-hidden  ">
-            <Image
-              width={240}
-              height={300}
-              className="h-full w-full"
-              src={category.image.url}
-              alt="category image"
-            />
-            <p className="absolute top-2 left-2   font-poppins font-semibold text-lg">
-              {category.name}
-            </p>
-          </div>
+          <Link href={`/category/${category._id}`}>
+            <div key={category._id} className=" flex flex-col  items-center">
+              <Image
+                width={240}
+                height={300}
+                className="h-full object-cover rounded-md"
+                src={category.image.url}
+                alt="category image"
+              />
+              <p className=" font-semibold text-lg">{category.name}</p>
+            </div>
+          </Link>
         ))}
       </div>
     </>

@@ -21,7 +21,7 @@ export default authMiddleware({
     '/api/admin/banner/update-banner',
     '/api/admin-products/get-all-products',
     '/api/admin-products/create-product',
-    ' /api/admin/category/get-category-ById',
+    '/api/admin/category/getById',
     '/api/admin-products/edit-product',
   ],
   async afterAuth(req, user, context) {

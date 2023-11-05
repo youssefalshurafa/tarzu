@@ -70,18 +70,24 @@ export async function updateCategory(formData: any) {
   }
 }
 
-export async function getCategoryById(categoryId: any) {
+export async function getCategoryById(id: any) {
   try {
     const res = await fetch(
-      `http://localhost:3000/api/admin/category/get-category-ById?id=${categoryId}`,
+      `http://localhost:3000/api/admin/category/getById?id=${id}`,
       {
         method: 'GET',
-        body: JSON.stringify(categoryId),
+
+        headers: {
+          Accept: 'application/json',
+          contentType: 'application/json',
+        },
       }
     );
+
     const data = await res.json();
+
     return data;
   } catch (error: any) {
-    throw new Error(`Failed to get category: ${error.message}`);
+    console.log(error);
   }
 }
