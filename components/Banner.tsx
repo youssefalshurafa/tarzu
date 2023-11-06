@@ -6,14 +6,16 @@ interface Banner {
 
 const Banner = ({ banner }: Banner) => {
   return (
-    <Image
-      src={banner}
-      alt="banner"
-      width={728}
-      height={90}
-      priority
-      style={{ margin: 'auto' }}
-    />
+    <div className=" ">
+      <Image
+        src={banner}
+        alt="banner"
+        width={728}
+        height={90}
+        priority
+        style={{ margin: 'auto' }}
+      />
+    </div>
   );
 };
 

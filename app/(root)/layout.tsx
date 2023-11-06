@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={inter.className}>
+        <body className="font-poppins">
           <div className="  flex flex-col  min-h-screen font-sans">
             <div>
               <Navbar />

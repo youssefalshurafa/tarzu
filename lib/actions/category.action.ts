@@ -38,7 +38,7 @@ export async function createCategory(formData: any) {
 export async function deleteCategory(categoryId: any) {
   try {
     const res = await fetch(
-      `/api/admin/category/delete-category?id=${categoryId}`,
+      `${process.env.WEBSITE_URL}/api/admin/category/delete-category?id=${categoryId}`,
       {
         method: 'DELETE',
         body: JSON.stringify(categoryId),
@@ -70,10 +70,10 @@ export async function updateCategory(formData: any) {
   }
 }
 
-export async function getCategoryById(id: any) {
+export async function getCategoryById(name: any) {
   try {
     const res = await fetch(
-      `http://localhost:3000/api/admin/category/getById?id=${id}`,
+      `http://localhost:3000/api/admin/category/getById?name=${name}`,
       {
         method: 'GET',
 

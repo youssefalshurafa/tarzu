@@ -12,7 +12,7 @@ const Navbar = async () => {
   const user = await currentUser();
   if (!user) {
     return (
-      <nav>
+      <nav className="fixed w-full top-0">
         <Mainnav userInfo={null} category={category} />
       </nav>
     );
@@ -21,7 +21,7 @@ const Navbar = async () => {
   const userInfo: UserInfo = res.data;
 
   return (
-    <nav>
+    <nav className=" fixed w-full top-0">
       <Mainnav userInfo={userInfo} category={category} />
     </nav>
   );
