@@ -70,7 +70,7 @@ export async function updateCategory(formData: any) {
   }
 }
 
-export async function getCategoryById(name: any) {
+export async function getById(name: any) {
   try {
     const res = await fetch(
       `http://localhost:3000/api/admin/category/getById?name=${name}`,
@@ -78,7 +78,6 @@ export async function getCategoryById(name: any) {
         method: 'GET',
 
         headers: {
-          Accept: 'application/json',
           contentType: 'application/json',
         },
       }

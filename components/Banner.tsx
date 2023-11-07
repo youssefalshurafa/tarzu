@@ -10,8 +10,9 @@ const Banner = ({ banner }: Banner) => {
       <Image
         src={banner}
         alt="banner"
-        width={728}
-        height={90}
+        layout="responsive"
+        width={500}
+        height={500}
         priority
         style={{ margin: 'auto' }}
       />
