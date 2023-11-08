@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProductType } from '@/lib/Types';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import React from 'react';
 
 const ProductCard = ({

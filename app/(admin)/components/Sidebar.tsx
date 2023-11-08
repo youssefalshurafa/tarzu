@@ -1,7 +1,7 @@
 'use client';
 
 import { SignOutButton, SignedIn } from '@clerk/nextjs';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Home, ImageIcon, Mountain, Shirt } from 'lucide-react';

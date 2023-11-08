@@ -5,6 +5,7 @@ const Page = async () => {
   const res = await getBanner();
   const data = res.data;
   const [banner] = data;
+  console.log('banner: ', banner);
   return (
     <>
       <AdminBanner banner={banner} />

@@ -11,7 +11,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { ProductType } from '@/lib/Types';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { Trash, Edit } from 'lucide-react';
 import {
   Accordion,

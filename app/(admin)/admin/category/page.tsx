@@ -16,7 +16,7 @@ import {
   updateCategory,
 } from '@/lib/actions/category.action';
 import { toast, Toaster } from 'react-hot-toast';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 
 const Page = () => {
   const [category, setCategory] = useState([]);

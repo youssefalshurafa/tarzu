@@ -4,15 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { getBanner, updateBanner } from '@/lib/actions/banner.action';
 import { deleteFiles, uploadFiles } from '@/lib/actions/files.action';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import { FormEvent, useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
 
 const AdminBanner = ({ banner }: any) => {
-  const [bannerId, setBannerId] = useState('');
   const [base64Image, setBase64Image] = useState<string | null>(null);
 
-  console.log('banner: ', banner);
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 

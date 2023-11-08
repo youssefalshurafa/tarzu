@@ -25,7 +25,7 @@ import {
   uploadFiles,
   uploadThumbnail,
 } from '@/lib/actions/files.action';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { Category, ProductType } from '@/lib/Types';
 import { useProductContext } from '@/lib/context/productContext';
 

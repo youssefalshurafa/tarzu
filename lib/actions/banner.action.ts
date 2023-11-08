@@ -4,6 +4,7 @@ export async function getBanner() {
       `${process.env.WEBSITE_URL}/api/admin/banner/get-banner`,
       {
         method: 'GET',
+        cache: 'no-store',
         headers: {
           contentType: 'application/json',
         },

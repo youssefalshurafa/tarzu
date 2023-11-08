@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 
 interface Banner {
   banner: string;
@@ -12,7 +12,7 @@ const Banner = ({ banner }: Banner) => {
         alt="banner"
         layout="responsive"
         width={500}
-        height={500}
+        height={250}
         priority
         style={{ margin: 'auto' }}
       />
