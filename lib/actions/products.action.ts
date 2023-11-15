@@ -61,3 +61,24 @@ export async function editProduct(product: any) {
     throw new Error(`Failed to create product: ${error.message}`);
   }
 }
+
+export async function getByCode(code: any) {
+  try {
+    const res = await fetch(
+      `http://localhost:3000/api/admin-products/get-by-code?code=${code}`,
+      {
+        method: 'GET',
+
+        headers: {
+          contentType: 'application/json',
+        },
+      }
+    );
+
+    const data = await res.json();
+
+    return data;
+  } catch (error: any) {
+    console.log(error);
+  }
+}

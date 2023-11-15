@@ -76,7 +76,7 @@ export async function getById(name: any) {
       `http://localhost:3000/api/admin/category/getById?name=${name}`,
       {
         method: 'GET',
-
+        cache: 'no-store',
         headers: {
           contentType: 'application/json',
         },

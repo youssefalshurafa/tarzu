@@ -11,7 +11,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { ProductType } from '@/lib/Types';
-import Image from "next/legacy/image";
+import Image from 'next/legacy/image';
 import { Trash, Edit } from 'lucide-react';
 import {
   Accordion,
@@ -136,7 +136,7 @@ const CurrentProducts = () => {
                         </div>
                         {editActive === product._id && (
                           <div className="absolute">
-                            <div className="relative -left-5 top-5 rounded-md border shadow-md backdrop-blur-lg p-4 ">
+                            <div className="relative z-30 -left-5 top-5 rounded-md border shadow-md backdrop-blur-lg p-4 ">
                               <EditProductForm
                                 handleCancel={handleCancel}
                                 categories={categories}

@@ -25,7 +25,7 @@ import {
   uploadFiles,
   uploadThumbnail,
 } from '@/lib/actions/files.action';
-import Image from "next/legacy/image";
+import Image from 'next/legacy/image';
 import { Category, ProductType } from '@/lib/Types';
 import { useProductContext } from '@/lib/context/productContext';
 
@@ -41,6 +41,7 @@ interface FormData {
   price: string;
   category: string;
   stock: string;
+  material: string;
   thumbnail: File | null;
   files: File[] | null;
 }
@@ -62,6 +63,7 @@ const EditProductForm: React.FC<Props> = ({
     price: product.price,
     category: product.category._id,
     stock: product.stock || '',
+    material: product.material || '',
     thumbnail: null,
     files: null,
   });
@@ -96,6 +98,7 @@ const EditProductForm: React.FC<Props> = ({
           title: formData.title,
           code: formData.code,
           price: formData.price,
+          material: formData.material,
           oldCategory: oldCategory,
           category: formData.category,
           thumbnail: {
@@ -125,6 +128,7 @@ const EditProductForm: React.FC<Props> = ({
           title: formData.title,
           code: formData.code,
           price: formData.price,
+          material: formData.material,
           oldCategory: oldCategory,
           category: formData.category,
           images: [
@@ -160,6 +164,7 @@ const EditProductForm: React.FC<Props> = ({
           title: formData.title,
           code: formData.code,
           price: formData.price,
+          material: formData.material,
           oldCategory: oldCategory,
           category: formData.category,
           thumbnail: {
@@ -198,6 +203,7 @@ const EditProductForm: React.FC<Props> = ({
         title: formData.title,
         code: formData.code,
         price: formData.price,
+        material: formData.material,
         oldCategory: oldCategory,
         category: formData.category,
       };
@@ -279,7 +285,7 @@ const EditProductForm: React.FC<Props> = ({
     }
   };
   return (
-    <div>
+    <div className="z-30">
       <Toaster position="top-center"></Toaster>
       <div className="mb-2 w-full flex justify-end ">
         <div className="w-max hover:cursor-pointer  rounded-xl ">
@@ -321,6 +327,19 @@ const EditProductForm: React.FC<Props> = ({
             onChange={handleInputChange}
           />
           {errors['price'] && <p style={{ color: 'red' }}>{errors['price']}</p>}
+        </div>
+        <div className="flex flex-col gap-2 font-semibold">
+          <p>Material *</p>
+          <Input
+            type="text"
+            defaultValue={product.material}
+            className="border no-focus"
+            name="material"
+            onChange={handleInputChange}
+          />
+          {errors['material'] && (
+            <p style={{ color: 'red' }}>{errors['material']}</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-2 font-semibold">

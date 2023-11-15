@@ -32,6 +32,7 @@ interface FormData {
   price: string;
   category: string;
   stock: string;
+  material: string;
   thumbnail: File | null;
   files: File[] | null;
 }
@@ -47,6 +48,7 @@ const CreateProductForm = ({ categories }: any) => {
     price: '',
     category: '',
     stock: '',
+    material: '',
     thumbnail: null,
     files: null,
   });
@@ -72,19 +74,19 @@ const CreateProductForm = ({ categories }: any) => {
       if (formData.files) {
         toast.loading('Creating...');
         const fd = new FormData(e.target as HTMLFormElement);
-        console.log('before image Upload');
+
         const uploadedThumbnail = await uploadThumbnail(fd);
         const uploadedFiles = await uploadFiles(fd);
 
         const imagesArray = uploadedFiles.map(
           ({ data: { url, key } }: any) => ({ url, key })
         );
-        console.log('before newProduct');
 
         const newProduct = {
           title: formData.title,
           code: formData.code,
           price: formData.price,
+          material: formData.material,
           category: formData.category,
           thumbnail: {
             imgKey: uploadedThumbnail.map((item) => item.data?.key).toString(),
@@ -113,11 +115,12 @@ const CreateProductForm = ({ categories }: any) => {
         const fd = new FormData(e.target as HTMLFormElement);
 
         const uploadedThumbnail = await uploadThumbnail(fd);
-
+        console.log('formData: ', formData);
         const newProduct = {
           title: formData.title,
           code: formData.code,
           price: formData.price,
+          material: formData.material,
           category: formData.category,
           thumbnail: {
             imgKey: uploadedThumbnail.map((item) => item.data?.key).toString(),
@@ -222,6 +225,19 @@ const CreateProductForm = ({ categories }: any) => {
             />
             {errors['price'] && (
               <p style={{ color: 'red' }}>{errors['price']}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2 font-semibold">
+            <p>Material</p>
+            <Input
+              type="text"
+              className="border no-focus"
+              name="material"
+              onChange={handleInputChange}
+            />
+            {errors['material'] && (
+              <p style={{ color: 'red' }}>{errors['material']}</p>
             )}
           </div>
 

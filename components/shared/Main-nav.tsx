@@ -40,7 +40,7 @@ const Mainnav = ({ category, userInfo }: Props) => {
   const router = useRouter();
 
   return (
-    <nav className="flex justify-between px-6 py-3 bg-slate-50 drop-shadow-md items-center ">
+    <nav className="flex  px-6 py-3 bg-slate-50 drop-shadow-md items-center ">
       <div className="md:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger>
@@ -63,13 +63,8 @@ const Mainnav = ({ category, userInfo }: Props) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div>
-        <Home
-          onClick={() => router.push('/')}
-          className="text-2xl font-semibold cursor-pointer"
-        />
-      </div>
-      <div className="hidden md:flex gap-4 font-semibold items-center">
+
+      <div className="hidden mx-auto md:flex gap-4 font-semibold items-center">
         {category?.map((category, i) => (
           <p key={i} className=" hover:cursor-pointer">
             {category.name}
@@ -91,7 +86,7 @@ const Mainnav = ({ category, userInfo }: Props) => {
       </SignedOut>
 
       <SignedIn>
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center mx-auto">
           {userInfo?.roles.Admin || userInfo?.roles.Editor ? (
             <Button onClick={() => router.push('/admin')} size={'sm'}>
               Admin

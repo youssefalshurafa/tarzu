@@ -16,6 +16,7 @@ export async function PUT(req: Request) {
         price: data.price,
         category: data.category,
         thumbnail: data.thumbnail,
+        material: data.material,
       },
       { upsert: true }
     );

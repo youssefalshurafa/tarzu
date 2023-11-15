@@ -16,7 +16,7 @@ import {
   updateCategory,
 } from '@/lib/actions/category.action';
 import { toast, Toaster } from 'react-hot-toast';
-import Image from "next/legacy/image";
+import Image from 'next/legacy/image';
 
 const Page = () => {
   const [category, setCategory] = useState([]);
@@ -164,8 +164,8 @@ const Page = () => {
                 <Image
                   src={cat.image?.url}
                   alt="category image"
-                  width={50}
-                  height={100}
+                  width={100}
+                  height={150}
                 />
                 <div className="flex gap-6">
                   <Button onClick={() => handleEditButton(cat)}>Edit</Button>

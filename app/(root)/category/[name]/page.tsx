@@ -21,7 +21,7 @@ const Page = () => {
   }, []);
 
   return (
-    <main className="absolute top-16 p-4 font-poppins w-full">
+    <main className="relative top-16 p-4 font-poppins w-full mb-8">
       <div
         onClick={() => router.push('/')}
         className="mb-4 cursor-pointer flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-green-500 text-transparent bg-clip-text tracking-widest"
@@ -37,7 +37,7 @@ const Page = () => {
         <p>{category?.products.length} STYLES FOUND</p>
       </div>
       {category?.products && (
-        <div>
+        <div className=" items-center">
           <ProductCard products={category?.products} />
         </div>
       )}

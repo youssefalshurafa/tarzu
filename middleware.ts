@@ -23,6 +23,7 @@ export default authMiddleware({
     '/api/admin-products/create-product',
     '/api/admin/category/getById',
     '/api/admin-products/edit-product',
+    '/api/admin-products/get-by-code',
   ],
   async afterAuth(req, user, context) {
     let userId = req.userId;
