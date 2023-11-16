@@ -20,13 +20,12 @@ const Page = () => {
     const res = await getByCode(code);
     setProduct(res.data);
   };
+
   useEffect(() => {
     getProduct();
   }, []);
-  console.log('cart: ', cart);
 
   const updatedProduct = { ...product, size };
-  console.log(updatedProduct);
 
   const imagesArray = product?.images.map((image) => image.url);
   const thumbnail = product?.thumbnail?.imgUrl;

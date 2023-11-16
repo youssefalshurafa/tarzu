@@ -26,7 +26,10 @@ import {
 import { useRouter } from 'next/navigation';
 import { UserInfo } from '@/lib/Types';
 import { Button } from '@/components/ui/button';
-
+import { useCartContext } from '@/lib/context/cartContext';
+import Cookies from 'js-cookie';
+import { useEffect } from 'react';
+import Link from 'next/link';
 type category = {
   id: Number;
   name: String;
@@ -38,6 +41,16 @@ interface Props {
 
 const Mainnav = ({ category, userInfo }: Props) => {
   const router = useRouter();
+  const { cart, setCart } = useCartContext();
+  //@ts-ignore
+  useEffect(() => {
+    const getCookie = Cookies.get('cart');
+    if (getCookie?.length) {
+      //@ts-ignore
+      console.log('getCookie:', getCookie);
+      setCart(JSON.parse(getCookie));
+    }
+  }, []);
 
   return (
     <nav className="flex  px-6 py-3 bg-slate-50 drop-shadow-md items-center ">
@@ -105,7 +118,13 @@ const Mainnav = ({ category, userInfo }: Props) => {
             className=" hover: cursor-pointer"
           />
           <Heart className=" hover: cursor-pointer" />
-          <ShoppingBag className=" hover: cursor-pointer" />
+          <Link href={'/cart'}>
+            <ShoppingBag className=" hover: cursor-pointer" />
+          </Link>
+
+          <div className="w-6 h-6 text-center  bg-neutral-700 text-white rounded-full relative right-4 bottom-1 z-20">
+            <span className="text-xs font-bold">{cart.length}</span>
+          </div>
         </div>
       </SignedIn>
     </nav>

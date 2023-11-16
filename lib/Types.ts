@@ -29,6 +29,8 @@ export type ProductType = {
   category: Category;
   stock?: string;
   material?: string;
+  quantity?: string;
+  size?: string;
   thumbnail: Thumbnail | undefined;
   images: Res[];
 };

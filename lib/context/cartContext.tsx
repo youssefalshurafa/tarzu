@@ -1,9 +1,17 @@
 'use client';
 
-import React, { ReactNode, createContext, useContext, useState } from 'react';
+import React, {
+  ReactNode,
+  SetStateAction,
+  createContext,
+  useContext,
+  useState,
+} from 'react';
+import Cookies from 'js-cookie';
 
 interface CartContextProps {
   cart: any[];
+  setCart: SetStateAction<any>;
   addToCart: (updatedProduct: any) => void;
 }
 
@@ -14,12 +22,20 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [cart, setCart] = useState<any[]>([]);
 
-  const addToCart = async (updatedProduct: any) => {
-    setCart(updatedProduct);
+  const addToCart = (updatedProduct: any) => {
+    const getCookie = Cookies.get('cart');
+    if (getCookie?.length) {
+      //@ts-ignore
+      setCart(JSON.parse(getCookie));
+    }
+    const newCart = [...cart, updatedProduct];
+    setCart(newCart);
+    Cookies.set('cart', JSON.stringify(newCart));
   };
 
   const contextValue: CartContextProps = {
     cart,
+    setCart,
     addToCart,
   };
 
