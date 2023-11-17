@@ -5,14 +5,19 @@ import React, {
   SetStateAction,
   createContext,
   useContext,
+  useEffect,
   useState,
 } from 'react';
 import Cookies from 'js-cookie';
+import { ProductType } from '../Types';
 
 interface CartContextProps {
-  cart: any[];
-  setCart: SetStateAction<any>;
-  addToCart: (updatedProduct: any) => void;
+  cartItems: any[];
+  setCartItems: SetStateAction<any>;
+  addToCart: (item: any) => void;
+  removeFromCart: (item: any) => void;
+  clearCart: () => void;
+  getCartTotal: () => void;
 }
 
 const CartContext = createContext<CartContextProps | undefined>(undefined);
@@ -20,23 +25,81 @@ const CartContext = createContext<CartContextProps | undefined>(undefined);
 export const CartProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [cart, setCart] = useState<any[]>([]);
+  const [cartItems, setCartItems] = useState(
+    localStorage.getItem('cartItems')
+      ? JSON.parse(localStorage.getItem('cartItems') || '{}')
+      : []
+  );
 
-  const addToCart = (updatedProduct: any) => {
-    const getCookie = Cookies.get('cart');
-    if (getCookie?.length) {
-      //@ts-ignore
-      setCart(JSON.parse(getCookie));
+  const addToCart = (item: ProductType) => {
+    const isItemInCart = cartItems.find(
+      (cartItem: ProductType) => cartItem._id === item._id
+    ); // check if the item is already in the cart
+
+    if (isItemInCart) {
+      setCartItems(
+        cartItems.map(
+          (
+            cartItem: ProductType // if the item is already in the cart, increase the quantity of the item
+          ) =>
+            cartItem._id === item._id
+              ? { ...cartItem, quantity: cartItem.quantity + 1 }
+              : cartItem // otherwise, return the cart item
+        )
+      );
+    } else {
+      setCartItems([...cartItems, { ...item, quantity: 1 }]); // if the item is not in the cart, add the item to the cart
     }
-    const newCart = [...cart, updatedProduct];
-    setCart(newCart);
-    Cookies.set('cart', JSON.stringify(newCart));
+  };
+  const removeFromCart = (item: ProductType) => {
+    const isItemInCart = cartItems.find(
+      (cartItem: ProductType) => cartItem._id === item._id
+    );
+
+    if (isItemInCart.quantity === 1) {
+      setCartItems(
+        cartItems.filter((cartItem: ProductType) => cartItem._id !== item._id)
+      );
+    } else {
+      setCartItems(
+        cartItems.map((cartItem: ProductType) =>
+          cartItem._id === item._id
+            ? { ...cartItem, quantity: cartItem.quantity - 1 }
+            : cartItem
+        )
+      );
+    }
   };
 
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
+  const getCartTotal = () => {
+    return cartItems.reduce(
+      (total: any, item: any) => total + item.price * item.quantity,
+      0
+    );
+  };
+
+  useEffect(() => {
+    const data = localStorage.getItem('cartItems');
+    if (data) {
+      setCartItems(JSON.parse(data));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  }, [cartItems]); // Include cartItems as a dependency here
+
   const contextValue: CartContextProps = {
-    cart,
-    setCart,
+    cartItems,
+    setCartItems,
     addToCart,
+    removeFromCart,
+    clearCart,
+    getCartTotal,
   };
 
   return (

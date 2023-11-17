@@ -10,16 +10,18 @@ import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
 const Page = () => {
-  const { cart, addToCart } = useCartContext();
+  const { cartItems, addToCart } = useCartContext();
   const params = useParams();
   const { code } = params;
   const router = useRouter();
   const [product, setProduct] = useState<ProductType>();
   const [size, setSize] = useState('');
+
   const getProduct = async () => {
     const res = await getByCode(code);
     setProduct(res.data);
   };
+  console.log('cartItems: ', cartItems);
 
   useEffect(() => {
     getProduct();

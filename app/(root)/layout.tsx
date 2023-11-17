@@ -1,6 +1,5 @@
 import '../globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import Navbar from '@/components/shared/Navbar';
 import { ClerkProvider } from '@clerk/nextjs';
 import Footer from '@/components/shared/Footer';

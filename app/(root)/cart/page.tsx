@@ -8,7 +8,7 @@ import Link from 'next/link';
 import React from 'react';
 
 const Page = () => {
-  const { cart } = useCartContext();
+  const { cartItems } = useCartContext();
 
   return (
     <main className="absolute  top-16 p-4 w-full flex flex-col justify-between">
@@ -25,7 +25,7 @@ const Page = () => {
         <CheckoutWizard activeStep={0} />
       </div>
       <div className="md:col-span-3">
-        {cart.map((product, i) => (
+        {cartItems.map((product, i) => (
           <div key={i}>
             <CheckoutProduct product={product} />
           </div>

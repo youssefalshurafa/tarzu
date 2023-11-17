@@ -41,14 +41,14 @@ interface Props {
 
 const Mainnav = ({ category, userInfo }: Props) => {
   const router = useRouter();
-  const { cart, setCart } = useCartContext();
+  const { cartItems, setCartItems } = useCartContext();
   //@ts-ignore
   useEffect(() => {
     const getCookie = Cookies.get('cart');
     if (getCookie?.length) {
       //@ts-ignore
       console.log('getCookie:', getCookie);
-      setCart(JSON.parse(getCookie));
+      setCartItems(JSON.parse(getCookie));
     }
   }, []);
 
@@ -123,7 +123,7 @@ const Mainnav = ({ category, userInfo }: Props) => {
           </Link>
 
           <div className="w-6 h-6 text-center  bg-neutral-700 text-white rounded-full relative right-4 bottom-1 z-20">
-            <span className="text-xs font-bold">{cart.length}</span>
+            <span className="text-xs font-bold">{cartItems.length}</span>
           </div>
         </div>
       </SignedIn>
