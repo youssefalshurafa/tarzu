@@ -8,7 +8,6 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import Cookies from 'js-cookie';
 import { ProductType } from '../Types';
 
 interface CartContextProps {
@@ -25,45 +24,62 @@ const CartContext = createContext<CartContextProps | undefined>(undefined);
 export const CartProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [cartItems, setCartItems] = useState(
-    localStorage.getItem('cartItems')
-      ? JSON.parse(localStorage.getItem('cartItems') || '{}')
-      : []
-  );
+  const [value, setValue] = useState([]);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setValue(
+        localStorage.getItem('cartItems')
+          ? JSON.parse(localStorage.getItem('cartItems') || '{}')
+          : []
+      );
+    }
+  }, []);
 
+  const [cartItems, setCartItems] = useState<any>(value);
   const addToCart = (item: ProductType) => {
     const isItemInCart = cartItems.find(
       (cartItem: ProductType) => cartItem._id === item._id
     ); // check if the item is already in the cart
 
     if (isItemInCart) {
-      setCartItems(
-        cartItems.map(
-          (
-            cartItem: ProductType // if the item is already in the cart, increase the quantity of the item
-          ) =>
-            cartItem._id === item._id
-              ? { ...cartItem, quantity: cartItem.quantity + 1 }
-              : cartItem // otherwise, return the cart item
-        )
+      const isSameSize = cartItems.find(
+        (cartItem: ProductType) => cartItem.size === item.size
       );
+      if (isSameSize) {
+        setCartItems(
+          cartItems.map(
+            (
+              cartItem: ProductType // if the item is already in the cart, increase the quantity of the item
+            ) =>
+              cartItem._id === item._id && cartItem.size === item.size
+                ? { ...cartItem, quantity: cartItem.quantity + 1 }
+                : cartItem // otherwise, return the cart item
+          )
+        );
+      } else {
+        setCartItems([...cartItems, { ...item, quantity: 1 }]); // if the item is not in the cart, add the item to the cart
+      }
     } else {
       setCartItems([...cartItems, { ...item, quantity: 1 }]); // if the item is not in the cart, add the item to the cart
     }
   };
   const removeFromCart = (item: ProductType) => {
     const isItemInCart = cartItems.find(
-      (cartItem: ProductType) => cartItem._id === item._id
+      (cartItem: ProductType) =>
+        cartItem._id === item._id && cartItem.size === item.size
     );
 
     if (isItemInCart.quantity === 1) {
       setCartItems(
-        cartItems.filter((cartItem: ProductType) => cartItem._id !== item._id)
+        cartItems.filter(
+          (cartItem: ProductType) =>
+            cartItem._id !== item._id && cartItem.size !== item.size
+        )
       );
     } else {
       setCartItems(
         cartItems.map((cartItem: ProductType) =>
-          cartItem._id === item._id
+          cartItem._id === item._id && cartItem.size === item.size
             ? { ...cartItem, quantity: cartItem.quantity - 1 }
             : cartItem
         )
@@ -101,7 +117,6 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     clearCart,
     getCartTotal,
   };
-
   return (
     <CartContext.Provider value={contextValue}>
       {children} {/* This is where the children prop is used */}

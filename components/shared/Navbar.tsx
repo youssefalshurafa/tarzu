@@ -1,4 +1,3 @@
-import React from 'react';
 import Mainnav from '@/components/shared/Main-nav';
 import { currentUser } from '@clerk/nextjs/server';
 import { UserInfo } from '@/lib/Types';

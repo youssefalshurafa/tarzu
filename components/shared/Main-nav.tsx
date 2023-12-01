@@ -6,15 +6,7 @@ import {
   SignedIn,
   SignedOut,
 } from '@clerk/nextjs';
-import {
-  Heart,
-  Home,
-  LogIn,
-  LogOut,
-  Menu,
-  ShoppingBag,
-  User,
-} from 'lucide-react';
+import { Heart, LogIn, LogOut, Menu, ShoppingBag, User } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,8 +19,6 @@ import { useRouter } from 'next/navigation';
 import { UserInfo } from '@/lib/Types';
 import { Button } from '@/components/ui/button';
 import { useCartContext } from '@/lib/context/cartContext';
-import Cookies from 'js-cookie';
-import { useEffect } from 'react';
 import Link from 'next/link';
 type category = {
   id: Number;
@@ -41,16 +31,14 @@ interface Props {
 
 const Mainnav = ({ category, userInfo }: Props) => {
   const router = useRouter();
-  const { cartItems, setCartItems } = useCartContext();
-  //@ts-ignore
-  useEffect(() => {
-    const getCookie = Cookies.get('cart');
-    if (getCookie?.length) {
-      //@ts-ignore
-      console.log('getCookie:', getCookie);
-      setCartItems(JSON.parse(getCookie));
-    }
-  }, []);
+  const { cartItems } = useCartContext();
+
+  const sumArray = cartItems?.map((product) => product.quantity);
+
+  const totalQuantity = sumArray.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0
+  );
 
   return (
     <nav className="flex  px-6 py-3 bg-slate-50 drop-shadow-md items-center ">
@@ -123,7 +111,7 @@ const Mainnav = ({ category, userInfo }: Props) => {
           </Link>
 
           <div className="w-6 h-6 text-center  bg-neutral-700 text-white rounded-full relative right-4 bottom-1 z-20">
-            <span className="text-xs font-bold">{cartItems.length}</span>
+            <span className="text-xs font-bold">{totalQuantity}</span>
           </div>
         </div>
       </SignedIn>

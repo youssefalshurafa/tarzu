@@ -6,6 +6,7 @@ import { getByCode } from '@/lib/actions/products.action';
 import { useCartContext } from '@/lib/context/cartContext';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { toast, Toaster } from 'react-hot-toast';
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 
@@ -34,6 +35,7 @@ const Page = () => {
   const images = [thumbnail].concat(imagesArray);
   return (
     <div className="mt-8 p-5 w-full">
+      <Toaster position="top-center"></Toaster>
       <div
         onClick={() => router.push('/')}
         className="mb-4 cursor-pointer flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-green-500 text-transparent bg-clip-text tracking-widest"
@@ -94,15 +96,6 @@ const Page = () => {
                 {product?.material}
               </p>
             </div>
-            <div>
-              <button
-                onClick={() => addToCart(updatedProduct)}
-                className=" text-center w-full  h-8 bg-black text-white mt-4 rounded-sm"
-              >
-                ADD TO BAG
-              </button>
-            </div>
-
             {product?.description && (
               <div className="mt-5">
                 <p className=" font-serif">Description</p>
@@ -111,11 +104,23 @@ const Page = () => {
                 </p>
               </div>
             )}
+            <div>
+              <button
+                onClick={() => {
+                  addToCart(updatedProduct);
+                  toast.success(`${updatedProduct.code} added to cart`);
+                }}
+                className=" text-center w-full hover:bg-gray-200 hover:text-black  h-8 bg-neutral-700 text-white mt-4 rounded-sm disabled:bg-gray-400 px-2 disabled:text-white disabled:cursor-not-allowed"
+                disabled={!size ? true : false}
+              >
+                ADD TO BAG
+              </button>
+            </div>
 
             <div className="mt-5">
               <Button
                 onClick={() => router.back()}
-                className="bg-gray-200 h-8 w-full cursor-pointer"
+                className="bg-neutral-700 text-white hover:bg-gray-200 hover:text-black h-8 w-full cursor-pointer"
               >
                 Back To Products
               </Button>
