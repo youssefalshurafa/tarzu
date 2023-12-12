@@ -2,12 +2,13 @@ export type UserInfo = {
   _id?: string;
   id: string;
   __v?: number;
-  email: string;
-  onboarded: boolean;
-  orders: string;
+  email?: string;
+  name: string;
+  onboarded?: boolean;
+  orders?: string;
   address: string;
   phoneNumber: string;
-  roles: {
+  roles?: {
     User: number;
     Editor: number;
     Admin: number;
@@ -49,4 +50,10 @@ export type Category = {
   name: string;
   products: ProductType[];
   _id: string;
+};
+
+export type OrderDetails = {
+  cartItems: ProductType[];
+  sum: number;
+  userData: UserInfo;
 };

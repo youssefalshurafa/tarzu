@@ -1,13 +1,11 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UserValidation } from '@/lib/validations/user';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,26 +15,23 @@ import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import * as z from 'zod';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { createUser, updateUser } from '@/lib/actions/user.action';
 import { useState } from 'react';
 import { toast, Toaster } from 'react-hot-toast';
+import { UserInfo } from '@/lib/Types';
 
 interface Props {
-  user: {
-    id: string;
-    name: string;
-    phoneNumber: string;
-    address: string;
-    email: string;
-  };
+  user: UserInfo;
   btnTitle: string;
+  fn?: () => void;
 }
 
-const AccountProfile = ({ user, btnTitle }: Props) => {
+const AccountProfile = ({ user, btnTitle, fn }: Props) => {
   const pathname = usePathname();
-  const router = useRouter();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  console.log('user: ', user);
 
   const form = useForm({
     resolver: zodResolver(UserValidation),
@@ -79,11 +74,14 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
       await updateUser(formData);
       toast.success('Profile Updated!');
       setIsLoading(false);
+      if (fn) {
+        fn();
+      }
     } catch (error) {
       console.log(error);
     }
   };
-  if (pathname.includes('/profile')) {
+  if (pathname.includes('/profile') || pathname.includes('/checkout')) {
     return (
       <Form {...form}>
         <Toaster position="top-center"></Toaster>

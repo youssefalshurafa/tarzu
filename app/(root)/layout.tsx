@@ -4,6 +4,7 @@ import Navbar from '@/components/shared/Navbar';
 import { ClerkProvider } from '@clerk/nextjs';
 import Footer from '@/components/shared/Footer';
 import { CartProvider } from '@/lib/context/cartContext';
+import { UserProvider } from '@/lib/context/userContext';
 
 export const metadata: Metadata = {
   title: 'Arzu',

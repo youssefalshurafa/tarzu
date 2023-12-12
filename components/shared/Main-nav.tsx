@@ -20,6 +20,7 @@ import { UserInfo } from '@/lib/Types';
 import { Button } from '@/components/ui/button';
 import { useCartContext } from '@/lib/context/cartContext';
 import Link from 'next/link';
+
 type category = {
   id: Number;
   name: String;
@@ -82,13 +83,18 @@ const Mainnav = ({ category, userInfo }: Props) => {
             </div>
           </SignInButton>
           <Heart className=" hover: cursor-pointer" />
-          <ShoppingBag />
+          <Link href={'/cart'}>
+            <ShoppingBag />
+          </Link>
+          <div className="w-6 h-6 text-center  bg-neutral-700 text-white rounded-full relative right-4 bottom-1 z-20">
+            <span className="text-xs font-bold">{totalQuantity}</span>
+          </div>
         </div>
       </SignedOut>
 
       <SignedIn>
         <div className="flex gap-4 items-center mx-auto">
-          {userInfo?.roles.Admin || userInfo?.roles.Editor ? (
+          {userInfo?.roles?.Admin || userInfo?.roles?.Editor ? (
             <Button onClick={() => router.push('/admin')} size={'sm'}>
               Admin
             </Button>

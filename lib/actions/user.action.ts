@@ -5,6 +5,9 @@ export async function getUser(userId: string) {
       {
         method: 'GET',
         cache: 'no-store',
+        headers: {
+          'content-type': 'application/json',
+        },
       }
     );
     const data = await res.json();
@@ -23,6 +26,24 @@ export async function updateUser(formData: any) {
       },
       cache: 'no-store',
       body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    return data;
+  } catch (e) {
+    console.log(e);
+  }
+}
+export async function addOrder(newOrder: any) {
+  try {
+    const res = await fetch('/api/user/add-order', {
+      method: 'PUT',
+      headers: {
+        'content-type': 'application/json',
+      },
+      cache: 'no-store',
+      body: JSON.stringify(newOrder),
     });
 
     const data = await res.json();

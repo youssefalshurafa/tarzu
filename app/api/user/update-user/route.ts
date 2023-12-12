@@ -6,7 +6,9 @@ export async function PUT(req: Request) {
   try {
     await connectToDB();
     const data = await req.json();
-    const { userId, name, phoneNumber, email, address } = data;
+    const { userId, name, phoneNumber, email, address, newOrder } = data;
+    console.log(newOrder);
+
     const updatedUser = await User.findOneAndUpdate(
       {
         id: userId,
@@ -16,6 +18,7 @@ export async function PUT(req: Request) {
         phoneNumber,
         email,
         address,
+        $push: { orders: newOrder },
         onboarded: true,
       },
       {

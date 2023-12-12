@@ -14,6 +14,7 @@ export default authMiddleware({
     '/api/user/get-users',
     '/api/user/update-user',
     '/api/user/create-user',
+    '/api/user/add-order',
     '/api/admin/banner/get-banner',
     '/api/admin/category/get-category',
     '/api/admin/category/delete-category',
@@ -27,6 +28,7 @@ export default authMiddleware({
   ],
   async afterAuth(req, user, context) {
     let userId = req.userId;
+
     const currentUrl = user.url;
     if (!userId) {
       if (currentUrl.includes('/admin')) {
@@ -35,10 +37,12 @@ export default authMiddleware({
     } else {
       const response = await getUser(userId);
 
-      const userRoles = response.data.roles;
+      if (response.data) {
+        const userRoles = response.data.roles;
 
-      if (currentUrl.includes('/admin') && !userRoles.Admin) {
-        return NextResponse.redirect('http://localhost:3000/');
+        if (currentUrl.includes('/admin') && !userRoles.Admin) {
+          return NextResponse.redirect('http://localhost:3000/');
+        }
       }
     }
   },
