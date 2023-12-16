@@ -25,6 +25,7 @@ export default authMiddleware({
     '/api/admin/category/getById',
     '/api/admin-products/edit-product',
     '/api/admin-products/get-by-code',
+    '/api/create-order',
   ],
   async afterAuth(req, user, context) {
     let userId = req.userId;

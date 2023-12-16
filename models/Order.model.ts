@@ -1,20 +1,31 @@
 import mongoose from 'mongoose';
-import Product from '@/models/product.model';
 import User from '@/models/user.model';
+import Product from '@/models/product.model';
 
-const orderSchema = new mongoose.Schema({
-  id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  cartItems: [
-    {
-      type: String,
+const OrderSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
-  ],
-  sum: Number,
-});
 
-const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
+    cartItems: [
+      {
+        quantity: { type: Number },
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Product',
+        },
+        size: { type: String },
+      },
+    ],
+    sum: {
+      type: Number,
+    },
+  },
+  { timestamps: true }
+);
+
+const Order = mongoose.models.Order || mongoose.model('Order', OrderSchema);
 
 export default Order;

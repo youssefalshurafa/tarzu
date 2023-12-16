@@ -8,7 +8,8 @@ import { useCartContext } from '@/lib/context/cartContext';
 import { OrderDetails, UserInfo } from '@/lib/Types';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
-import { addOrder, updateUser } from '@/lib/actions/user.action';
+import { createOrder } from '@/lib/actions/order.action';
+
 interface Props {
   userData: UserInfo;
 }
@@ -26,16 +27,23 @@ const OrderComplete: React.FC<Props> = ({ userData }) => {
     sum > 1500 ? setShippingRate(0) : setShippingRate(50);
   });
 
-  const newOrder: OrderDetails = {
-    cartItems: cartItems,
-    userData: userData,
+  const newOrder = {
+    user: userData.id,
+    cartItems: cartItems.map((item) => ({
+      quantity: item.quantity,
+      size: item.size,
+      product: item._id,
+    })),
+
     sum: sum + shippingRate,
   };
 
   const onUpdate = async () => {
     try {
-      await updateUser(newOrder);
-      toast.success('Order Placed!');
+      const res = await createOrder(newOrder);
+      if (res.success) {
+        toast.success('Order Placed!');
+      }
     } catch (error) {
       console.log(error);
     }
