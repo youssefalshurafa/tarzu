@@ -5,9 +5,8 @@ import { NextResponse } from 'next/server';
 export async function GET(req: Request) {
   try {
     await connectToDB();
-    const category = await Category.find({})
-      .populate({ path: 'products', model: 'Product' })
-      .exec();
+    const category = await Category.find({});
+
     if (category && category.length) {
       return NextResponse.json({ success: true, data: category });
     } else {

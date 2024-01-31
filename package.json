@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@clerk/nextjs": "^4.23.5",
     "@hookform/resolvers": "^3.3.1",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.4",
@@ -18,8 +17,6 @@
     "@radix-ui/react-select": "^1.2.2",
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
-    "@types/node": "20.6.0",
-    "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "@uploadthing/react": "^5.5.0",
     "autoprefixer": "10.4.15",
@@ -36,9 +33,28 @@
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "5.2.2",
     "uploadthing": "^5.5.3",
     "zod": "^3.22.2",
     "zod-validation-error": "^1.5.0"
+  },
+  "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
+  "main": "next.config.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/youssefalshurafa/tarzu.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/youssefalshurafa/tarzu/issues"
+  },
+  "homepage": "https://github.com/youssefalshurafa/tarzu#readme",
+  "devDependencies": {
+    "@types/node": "20.8.7",
+    "@types/react": "18.2.30",
+    "typescript": "5.2.2"
   }
 }
